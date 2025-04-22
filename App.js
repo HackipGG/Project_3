@@ -2,6 +2,7 @@
 // Names: Jack T, Jon L, Alexander G
 // Date: 4/22/25
 
+
 fetch('https://raw.githubusercontent.com/HackipGG/Project_3/refs/heads/main/species_ids.csv')
 .then(response => response.text())
 .then(data => {
@@ -10,7 +11,12 @@ fetch('https://raw.githubusercontent.com/HackipGG/Project_3/refs/heads/main/spec
     console.log(numbers);
 })
 
-speciesId = 7;
+const speciesId = 0;
+function getRandomID(numbers) {
+    let rIndex = Math.floor(Math.random() * numbers.length);
+    speciesId = numbers[rIndex];
+    return speciesId;
+}
 
 fetch(`https://api.inaturalist.org/v1/taxa/${speciesId}`)
   .then(response => response.json())
