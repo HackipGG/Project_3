@@ -1,14 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>My JavaScript Test</title>
-    <script src="App.js"></script>
+  <meta charset="UTF-8">
+  <title>Random Species from iNaturalist</title>
+  <script defer src="App.js"></script>
+  <style> 
+    #info { 
+      text-align: center; 
+      max-width: 600px; 
+      margin: 1em auto; 
+      font-family: sans-serif; 
+    }
+    #info p { font-size: 1.1em; }
+    #info img { max-width: 100%; height: auto; border-radius: 8px; }
+    button { display: block; margin: 1em auto; padding: .5em 1.2em; font-size: 1em; }
+  </style>
 </head>
 
 <body>
-    <h1>Hello from HTML!</h1>
-    <button onclick = "getRandomID()">Generate Random Species!</button>
-</body>
+  <h1 style="text-align:center;">Random Species from iNaturalist!</h1>
+  <button id="generate">Generate Species</button>
 
+  <div id="info" hidden>
+    <p><strong>Name:</strong> <span id="name"></span></p>
+    <p><strong>Rank:</strong> <span id="rank"></span></p>
+    <p><strong>Hierarchy:</strong> <span id="hierarchy"></span></p>
+    <p><strong>Number of Observations:</strong> <span id="observations"></span></p>
+    <p><strong>Photo:</strong><br>
+      <img id="photo" alt="Taxon photo">
+    </p>
+  </div>
+
+  <script>
+    const btn  = document.getElementById('generate');
+    const info = document.getElementById('info');
+
+    btn.addEventListener('click', async () => {
+      const data = await getRandomID();
+      if (!data) {
+        alert("Could not fetch any species this time. Try again!");
+        return;
+      }
+      document.getElementById('name').textContent = data.name;
+      document.getElementById('rank').textContent = data.rank;
+      document.getElementById('hierarchy').textContent = data.hierarchy;
+      document.getElementById('observations').textContent = data.observations;
+      if (data.photo) {
+        document.getElementById('photo').src = data.photo;
+        document.getElementById('photo').alt = data.name + " photo";
+      } else {
+        document.getElementById('photo').src = '';
+        document.getElementById('photo').alt = 'No photo available';
+      }
+      info.hidden = false;
+    });
+  </script>
+</body>
 </html>
