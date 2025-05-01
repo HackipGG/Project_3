@@ -1,26 +1,54 @@
-// CSC 2053-002 - Project 3
-// Names: Jack T, Jon L, Alexander G
-// Date: 4/22/25
+// CSC 2053-001 - Project 3
+// Names: Jon L, Alexander G, Jack T
+// Date: 4/24/25
 
-fetch('https://raw.githubusercontent.com/HackipGG/Project_3/refs/heads/main/species_ids.csv')
-.then(response => response.text())
-.then(data => {
-    const lines = data.trim().split('\n');
-    const numbers = lines.slice(1).map(Number);
-    console.log(numbers);
-})
+let numbers = [];
+let speciesId = null;
 
-speciesId = 7;
+// Load csv
+async function loadIDs() {
+  try {
+    const res = await fetch('https://raw.githubusercontent.com/HackipGG/Project_3/main/species_ids.csv');
+    const txt = await res.text();
+    const lines = txt.trim().split('\n');
+    numbers = lines.slice(1).map(Number);
+  } 
+  catch (err) {
+    console.error("Failed to load IDs:", err);
+  }
+}
 
-fetch(`https://api.inaturalist.org/v1/taxa/${speciesId}`)
-  .then(response => response.json())
-  .then(data => {
-      console.log(data);
-      const species = data.results[0];
-      console.log('Name:', species.name);
-      //console.log('Rank:', species.rank);
-      console.log('Taxon Hierarchy:', species.ancestors);
-      if (species.common_name) {
-        console.log('Common Name:', species.common_name);
-      }
-  })
+async function fetchData(id) {
+  try {
+    const res = await fetch(`https://api.inaturalist.org/v1/taxa/${id}`);
+    const json = await res.json();
+    const sp = json.results[0];
+
+    if (!sp) {
+      console.warn("No results for ID", id);
+      return null;
+    }
+
+    return {
+      name: sp.name,
+      rank: sp.rank,
+      hierarchy: sp.ancestors.map(a => a.name).join(' → '),
+      photo: sp.default_photo?.medium_url || sp.default_photo?.square_url || null,
+      observations: sp.observations_count
+    };
+  } 
+  catch (err) {
+    console.error("Failed to fetch taxon:", err);
+    return null;
+  }
+}
+
+async function getRandomID() {
+  if (numbers.length === 0) {
+    await loadIDs();
+    if (numbers.length === 0) return null;
+  }
+  const rIndex = Math.floor(Math.random() * numbers.length);
+  speciesId = numbers[rIndex];
+  return await fetchData(speciesId);
+}
