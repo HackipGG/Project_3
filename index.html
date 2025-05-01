@@ -23,7 +23,7 @@
 
   <div id="info" hidden>
     <p><strong>Name:</strong> <span id="name"></span></p>
-    <p><strong>Rank:</strong> <span id="rank"></span></p>
+    <p><strong>Summary:</strong> <span id="summary"></span></p>
     <p><strong>Hierarchy:</strong> <span id="hierarchy"></span></p>
     <p><strong>Number of Observations:</strong> <span id="observations"></span></p>
     <p><strong>Photo:</strong><br>
@@ -42,7 +42,7 @@
         return;
       }
       document.getElementById('name').textContent = data.name;
-      document.getElementById('rank').textContent = data.rank;
+      document.getElementById('summary').textContent = data.summary;
       document.getElementById('hierarchy').textContent = data.hierarchy;
       document.getElementById('observations').textContent = data.observations;
       if (data.photo) {

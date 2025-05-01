@@ -18,11 +18,17 @@ async function loadIDs() {
   }
 }
 
+function cleanText(text){
+
+  return text ? text.replace(/<\/?[^>]+>/g, '') : 'No summary available';
+}
+
 async function fetchData(id) {
   try {
     const res = await fetch(`https://api.inaturalist.org/v1/taxa/${id}`);
     const json = await res.json();
     const sp = json.results[0];
+    console.log(sp);
 
     if (!sp) {
       console.warn("No results for ID", id);
@@ -31,10 +37,10 @@ async function fetchData(id) {
 
     return {
       name: sp.name,
-      rank: sp.rank,
       hierarchy: sp.ancestors.map(a => a.name).join(' → '),
       photo: sp.default_photo?.medium_url || sp.default_photo?.square_url || null,
-      observations: sp.observations_count
+      observations: sp.observations_count,
+      summary: cleanText(sp.wikipedia_summary)
     };
   } 
   catch (err) {
